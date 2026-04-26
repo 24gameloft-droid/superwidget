@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/calc_root"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="#CC0F0F1A" android:padding="4dp">
+    <TextView android:id="@+id/calc_display"
+        android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="2" android:gravity="end|center_vertical"
+        android:textColor="#FFFFFF" android:textSize="28sp" android:textStyle="bold"
+        android:paddingEnd="8dp" android:paddingStart="8dp"
+        android:background="#1AFFFFFF" android:text="0"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+        <Button android:id="@+id/b_clear" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="C" android:textColor="#FF6B6B" android:background="@drawable/calc_btn_op" android:textSize="16sp"/>
+        <Button android:id="@+id/b_pm" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="+/-" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_op" android:textSize="14sp"/>
+        <Button android:id="@+id/b_pct" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="%" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_op" android:textSize="16sp"/>
+        <Button android:id="@+id/b_div" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="÷" android:textColor="#89B4FA" android:background="@drawable/calc_btn_op" android:textSize="20sp"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+        <Button android:id="@+id/b7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="7" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_num" android:textSize="18sp"/>
+        <Button android:id="@+id/b8" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="8" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_num" android:textSize="18sp"/>
+        <Button android:id="@+id/b9" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="9" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_num" android:textSize="18sp"/>
+        <Button android:id="@+id/b_mul" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="×" android:textColor="#89B4FA" android:background="@drawable/calc_btn_op" android:textSize="20sp"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+        <Button android:id="@+id/b4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="4" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_num" android:textSize="18sp"/>
+        <Button android:id="@+id/b5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="5" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_num" android:textSize="18sp"/>
+        <Button android:id="@+id/b6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="6" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_num" android:textSize="18sp"/>
+        <Button android:id="@+id/b_sub" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="-" android:textColor="#89B4FA" android:background="@drawable/calc_btn_op" android:textSize="20sp"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+        <Button android:id="@+id/b1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="1" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_num" android:textSize="18sp"/>
+        <Button android:id="@+id/b2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="2" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_num" android:textSize="18sp"/>
+        <Button android:id="@+id/b3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="3" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_num" android:textSize="18sp"/>
+        <Button android:id="@+id/b_add" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="+" android:textColor="#89B4FA" android:background="@drawable/calc_btn_op" android:textSize="20sp"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+        <Button android:id="@+id/b0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="2" android:text="0" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_num" android:textSize="18sp"/>
+        <Button android:id="@+id/b_dot" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="." android:textColor="#FFFFFF" android:background="@drawable/calc_btn_num" android:textSize="20sp"/>
+        <Button android:id="@+id/b_eq" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="=" android:textColor="#FFFFFF" android:background="@drawable/calc_btn_eq" android:textSize="20sp"/>
+    </LinearLayout>
+</LinearLayout>
