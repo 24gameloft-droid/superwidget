@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/folder_root"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="#E60F0F0F" android:padding="0dp">
+    android:background="#E60F0F0F">
     <GridView android:id="@+id/folder_grid"
         android:layout_width="match_parent" android:layout_height="match_parent"
-        android:numColumns="auto_fit" android:columnWidth="65dp"
-        android:verticalSpacing="12dp" android:horizontalSpacing="4dp"
+        android:numColumns="auto_fit" android:columnWidth="70dp"
+        android:verticalSpacing="15dp" android:horizontalSpacing="5dp"
         android:stretchMode="columnWidth" android:gravity="center"
-        android:padding="8dp" android:clipToPadding="false"
+        android:padding="10dp" android:clipToPadding="false"
         android:scrollbars="none" android:overScrollMode="never"/>
-</RelativeLayout>
+</FrameLayout>
