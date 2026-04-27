@@ -2,15 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/folder_root"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical" android:background="#CC1a1a2e" android:padding="4dp">
+    android:orientation="vertical" android:background="#CC0A0A0A" android:padding="0dp">
     <TextView android:id="@+id/folder_name"
         android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:textColor="#FFFFFF" android:textSize="11sp" android:textStyle="bold"
-        android:gravity="center" android:paddingBottom="2dp" android:text="Folder"/>
+        android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold"
+        android:gravity="center" android:padding="5dp"/>
     <GridView android:id="@+id/folder_grid"
         android:layout_width="match_parent" android:layout_height="match_parent"
-        android:numColumns="auto_fit" android:columnWidth="50dp"
-        android:verticalSpacing="4dp" android:horizontalSpacing="4dp"
+        android:numColumns="auto_fit" android:columnWidth="60dp"
+        android:verticalSpacing="10dp" android:horizontalSpacing="2dp"
         android:stretchMode="columnWidth" android:gravity="center"
-        android:scrollbars="vertical" android:scrollbarStyle="outsideOverlay"/>
+        android:scrollbars="vertical" android:scrollbarStyle="outsideOverlay"
+        android:clipToPadding="false" android:padding="4dp"/>
 </LinearLayout>

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.RemoteViews
 import org.json.JSONArray
+
 class FolderWidget : AppWidgetProvider() {
     companion object {
         fun update(ctx: Context, mgr: AppWidgetManager, id: Int) {
@@ -14,24 +15,40 @@ class FolderWidget : AppWidgetProvider() {
             val alpha=p.getInt("alpha",200); val r=p.getInt("r",26); val g=p.getInt("g",26); val b=p.getInt("b",46)
             val v = RemoteViews(ctx.packageName, R.layout.folder_widget)
             v.setInt(R.id.folder_root,"setBackgroundColor",(alpha shl 24)or(r shl 16)or(g shl 8)or b)
+            
             try {
                 val folders = JSONArray(p.getString("folders","[]") ?: "[]")
                 val fidx = p.getInt("wid_$id",0)
-                if (folders.length()>0) v.setTextViewText(R.id.folder_name, folders.getJSONObject(if(fidx<folders.length())fidx else 0).optString("name","Folder"))
+                if (folders.length()>0) {
+                    val folderObj = folders.getJSONObject(if(fidx < folders.length()) fidx else 0)
+                    v.setTextViewText(R.id.folder_name, folderObj.optString("name","Apps"))
+                }
             } catch(e:Exception){}
-            v.setRemoteAdapter(R.id.folder_grid, Intent(ctx, FolderRemoteService::class.java).putExtra("wid",id))
-            val pi = PendingIntent.getBroadcast(ctx,id,Intent(ctx,FolderWidget::class.java).setAction("com.mydev.superwidget.APP_LAUNCH"),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
-            v.setPendingIntentTemplate(R.id.folder_grid,pi)
-            mgr.updateAppWidget(id,v); mgr.notifyAppWidgetViewDataChanged(id,R.id.folder_grid)
+
+            val intent = Intent(ctx, FolderRemoteService::class.java).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
+                putExtra("wid", id)
+            }
+            v.setRemoteAdapter(R.id.folder_grid, intent)
+            
+            val launchIntent = Intent(ctx, FolderWidget::class.java).setAction("com.mydev.superwidget.APP_LAUNCH")
+            val pi = PendingIntent.getBroadcast(ctx, id, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
+            v.setPendingIntentTemplate(R.id.folder_grid, pi)
+            
+            mgr.updateAppWidget(id, v)
+            mgr.notifyAppWidgetViewDataChanged(id, R.id.folder_grid)
         }
     }
-    override fun onUpdate(ctx: Context, mgr: AppWidgetManager, ids: IntArray) { ids.forEach { update(ctx,mgr,it) } }
+    override fun onUpdate(ctx: Context, mgr: AppWidgetManager, ids: IntArray) { ids.forEach { update(ctx, mgr, it) } }
+    override fun onAppWidgetOptionsChanged(ctx: Context, mgr: AppWidgetManager, id: Int, newOpts: Bundle) { update(ctx, mgr, id) }
     override fun onReceive(ctx: Context, intent: Intent) {
-        super.onReceive(ctx,intent)
-        if (intent.action=="com.mydev.superwidget.APP_LAUNCH") {
-            val pkg=intent.getStringExtra("pkg")?:return
-            ctx.packageManager.getLaunchIntentForPackage(pkg)?.let{it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);ctx.startActivity(it)}
+        super.onReceive(ctx, intent)
+        if (intent.action == "com.mydev.superwidget.APP_LAUNCH") {
+            val pkg = intent.getStringExtra("pkg") ?: return
+            ctx.packageManager.getLaunchIntentForPackage(pkg)?.let {
+                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                ctx.startActivity(it)
+            }
         }
     }
-    override fun onAppWidgetOptionsChanged(ctx: Context, mgr: AppWidgetManager, id: Int, opts: Bundle) { update(ctx,mgr,id) }
 }
