@@ -20,16 +20,16 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 class MainActivity : FlutterActivity() {
-    private val CH = "com.mydev.superwidget/ch"
-    private val PICK = 7001
+    private val CH="com.mydev.superwidget/ch"
+    private val PICK=7001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(!Settings.canDrawOverlays(this)) startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,Uri.parse("package:$packageName")))
-        if(!isNLEnabled()) startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+        if(!Settings.canDrawOverlays(this))startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,Uri.parse("package:$packageName")))
+        if(!isNLEnabled())startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         startService(Intent(this,OverlayService::class.java))
         val perm=if(Build.VERSION.SDK_INT>=33)Manifest.permission.READ_MEDIA_IMAGES else Manifest.permission.READ_EXTERNAL_STORAGE
-        if(ContextCompat.checkSelfPermission(this,perm)!=PackageManager.PERMISSION_GRANTED) ActivityCompat.requestPermissions(this,arrayOf(perm),7000)
+        if(ContextCompat.checkSelfPermission(this,perm)!=PackageManager.PERMISSION_GRANTED)ActivityCompat.requestPermissions(this,arrayOf(perm),7000)
     }
 
     override fun configureFlutterEngine(fe: FlutterEngine) {
@@ -38,90 +38,36 @@ class MainActivity : FlutterActivity() {
         val fp=getSharedPreferences("sw_folder",Context.MODE_PRIVATE)
         val pp=getSharedPreferences(PhotoWidget.PREFS,Context.MODE_PRIVATE)
 
-        MethodChannel(fe.dartExecutor.binaryMessenger, CH).setMethodCallHandler { call, result ->
-            when(call.method) {
-                "init" -> {
+        MethodChannel(fe.dartExecutor.binaryMessenger,CH).setMethodCallHandler{call,result->
+            when(call.method){
+                "init"->{
                     val albums=JSONArray()
-                    try {
-                        val cur=contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                            arrayOf(MediaStore.Images.Media.BUCKET_ID,MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.Media._ID),
-                            null,null,"${MediaStore.Images.Media.DATE_ADDED} DESC")
-                        val seen=mutableSetOf<String>()
-                        cur?.use{
-                            val biCol=it.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
-                            val bnCol=it.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-                            val idCol=it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                            while(it.moveToNext()){val bid=it.getString(biCol)?:continue;if(seen.add(bid))albums.put(JSONObject().apply{put("id",bid);put("name",it.getString(bnCol)?:"Unknown");put("thumb","${MediaStore.Images.Media.EXTERNAL_CONTENT_URI}/${it.getLong(idCol)}")})}
-                        }
-                    } catch(e:Exception){}
-
-                    val pm=packageManager
-                    val list=mutableListOf<Pair<String,String>>()
-                    val i=Intent(Intent.ACTION_MAIN,null).apply{addCategory(Intent.CATEGORY_LAUNCHER)}
-                    for(ri in pm.queryIntentActivities(i,0))try{val info=ri.activityInfo.applicationInfo;list.add(pm.getApplicationLabel(info).toString() to info.packageName)}catch(e:Exception){}
-                    list.sortBy{it.first}
-                    val apps=JSONArray()
-                    for((n,p2) in list)apps.put(JSONObject().apply{put("n",n);put("p",p2)})
-
-                    result.success(JSONObject().apply{
-                        put("albums",albums); put("apps",apps)
-                        put("folders",JSONArray(fp.getString("folders","[]")))
-                        put("photoCount",try{JSONArray(pp.getString("photos","[]")).length()}catch(e:Exception){0})
-                        put("fr",fp.getInt("r",26));put("fg",fp.getInt("g",26));put("fb",fp.getInt("b",46));put("fa",fp.getInt("alpha",200))
-                        put("nr",np.getInt("r",30));put("ng",np.getInt("g",30));put("nb",np.getInt("b",46));put("na",np.getInt("a",204))
-                        put("allowed",JSONArray(np.getStringSet("allowed",emptySet())?.toList()?:emptyList<String>()))
-                        put("hasOverlay",Settings.canDrawOverlays(this@MainActivity))
-                        put("hasNL",isNLEnabled())
-                    }.toString())
+                    try{val cur=contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,arrayOf(MediaStore.Images.Media.BUCKET_ID,MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.Media._ID),null,null,"${MediaStore.Images.Media.DATE_ADDED} DESC");val seen=mutableSetOf<String>();cur?.use{val biCol=it.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID);val bnCol=it.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);val idCol=it.getColumnIndexOrThrow(MediaStore.Images.Media._ID);while(it.moveToNext()){val bid=it.getString(biCol)?:continue;if(seen.add(bid))albums.put(JSONObject().apply{put("id",bid);put("name",it.getString(bnCol)?:"Unknown")})}}}catch(e:Exception){}
+                    val pm=packageManager;val list=mutableListOf<Pair<String,String>>();val i=Intent(Intent.ACTION_MAIN,null).apply{addCategory(Intent.CATEGORY_LAUNCHER)};for(ri in pm.queryIntentActivities(i,0))try{val info=ri.activityInfo.applicationInfo;list.add(pm.getApplicationLabel(info).toString() to info.packageName)}catch(e:Exception){};list.sortBy{it.first};val apps=JSONArray();for((n,p2)in list)apps.put(JSONObject().apply{put("n",n);put("p",p2)})
+                    result.success(JSONObject().apply{put("albums",albums);put("apps",apps);put("folders",JSONArray(fp.getString("folders","[]")));put("photoCount",try{JSONArray(pp.getString("photos","[]")).length()}catch(e:Exception){0});put("fr",fp.getInt("r",26));put("fg",fp.getInt("g",26));put("fb",fp.getInt("b",46));put("fa",fp.getInt("alpha",200));put("fcols",fp.getInt("cols",4));put("nr",np.getInt("r",30));put("ng",np.getInt("g",30));put("nb",np.getInt("b",46));put("na",np.getInt("a",204));put("cr",np.getInt("cr",15));put("cg",np.getInt("cg",15));put("cb",np.getInt("cb",26));put("ca",np.getInt("ca",204));put("allowed",JSONArray(np.getStringSet("allowed",emptySet())?.toList()?:emptyList<String>()));put("hasOverlay",Settings.canDrawOverlays(this@MainActivity));put("hasNL",isNLEnabled())}.toString())
                 }
-                "selectAlbum" -> {
-                    val bid=call.argument<String>("id")?:""
-                    val uris=JSONArray()
-                    try{val cur=contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,arrayOf(MediaStore.Images.Media._ID),"${MediaStore.Images.Media.BUCKET_ID}=?",arrayOf(bid),"${MediaStore.Images.Media.DATE_ADDED} DESC")
-                        cur?.use{val idCol=it.getColumnIndexOrThrow(MediaStore.Images.Media._ID);while(it.moveToNext())uris.put("${MediaStore.Images.Media.EXTERNAL_CONTENT_URI}/${it.getLong(idCol)}")}}catch(e:Exception){}
-                    pp.edit().putString("photos",uris.toString()).putInt("idx",0).apply()
-                    val mgr=AppWidgetManager.getInstance(this)
-                    mgr.getAppWidgetIds(ComponentName(this,PhotoWidget::class.java)).forEach{PhotoWidget.update(this,mgr,it)}
-                    PhotoWidget.schedule(this); result.success(uris.length())
-                }
-                "pickPhotos" -> { startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply{type="image/*";putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);addCategory(Intent.CATEGORY_OPENABLE)},PICK); result.success(true) }
-                "saveFolder" -> {
-                    fp.edit().putString("folders",call.argument<String>("folders")?:"[]").putInt("alpha",call.argument<Int>("a")?:200).putInt("r",call.argument<Int>("r")?:26).putInt("g",call.argument<Int>("g")?:26).putInt("b",call.argument<Int>("b")?:46).apply()
-                    val mgr=AppWidgetManager.getInstance(this)
-                    mgr.getAppWidgetIds(ComponentName(this,FolderWidget::class.java)).forEach{FolderWidget.update(this,mgr,it)}
-                    result.success(true)
-                }
-                "saveNotif" -> {
-                    val allowed=call.argument<List<String>>("allowed")?:emptyList()
-                    np.edit().putStringSet("allowed",allowed.toSet()).putInt("r",call.argument<Int>("r")?:30).putInt("g",call.argument<Int>("g")?:30).putInt("b",call.argument<Int>("b")?:46).putInt("a",call.argument<Int>("a")?:204).apply()
-                    result.success(true)
-                }
-                "pinPhoto" -> { pin(PhotoWidget::class.java); result.success(true) }
-                "pinFolder" -> { pin(FolderWidget::class.java); result.success(true) }
-                "pinCalc" -> { pin(CalcWidget::class.java); result.success(true) }
-                "testPopup" -> { OverlayService.show(this,"Super Widget","Test Notification","This popup lasts 5 seconds!",packageName); result.success(true) }
-                "requestOverlay" -> { startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,Uri.parse("package:$packageName"))); result.success(true) }
-                "requestNL" -> { startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)); result.success(true) }
-                else -> result.notImplemented()
+                "selectAlbum"->{val bid=call.argument<String>("id")?:"";val uris=JSONArray();try{val cur=contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,arrayOf(MediaStore.Images.Media._ID),"${MediaStore.Images.Media.BUCKET_ID}=?",arrayOf(bid),"${MediaStore.Images.Media.DATE_ADDED} DESC");cur?.use{val idCol=it.getColumnIndexOrThrow(MediaStore.Images.Media._ID);while(it.moveToNext())uris.put("${MediaStore.Images.Media.EXTERNAL_CONTENT_URI}/${it.getLong(idCol)}")}}catch(e:Exception){};pp.edit().putString("photos",uris.toString()).putInt("idx",0).apply();val mgr=AppWidgetManager.getInstance(this);mgr.getAppWidgetIds(ComponentName(this,PhotoWidget::class.java)).forEach{PhotoWidget.update(this,mgr,it)};PhotoWidget.schedule(this);result.success(uris.length())}
+                "pickPhotos"->{startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply{type="image/*";putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);addCategory(Intent.CATEGORY_OPENABLE)},PICK);result.success(true)}
+                "saveFolder"->{fp.edit().putString("folders",call.argument<String>("folders")?:"[]").putInt("alpha",call.argument<Int>("a")?:200).putInt("r",call.argument<Int>("r")?:26).putInt("g",call.argument<Int>("g")?:26).putInt("b",call.argument<Int>("b")?:46).putInt("cols",call.argument<Int>("cols")?:4).apply();val mgr=AppWidgetManager.getInstance(this);mgr.getAppWidgetIds(ComponentName(this,FolderWidget::class.java)).forEach{FolderWidget.update(this,mgr,it)};result.success(true)}
+                "saveNotif"->{val allowed=call.argument<List<String>>("allowed")?:emptyList();np.edit().putStringSet("allowed",allowed.toSet()).putInt("r",call.argument<Int>("r")?:30).putInt("g",call.argument<Int>("g")?:30).putInt("b",call.argument<Int>("b")?:46).putInt("a",call.argument<Int>("a")?:204).apply();val mgr=AppWidgetManager.getInstance(this);mgr.getAppWidgetIds(ComponentName(this,NotifWidget::class.java)).forEach{NotifWidget.update(this,mgr,it)};result.success(true)}
+                "saveCalc"->{np.edit().putInt("cr",call.argument<Int>("r")?:15).putInt("cg",call.argument<Int>("g")?:15).putInt("cb",call.argument<Int>("b")?:26).putInt("ca",call.argument<Int>("a")?:204).apply();val mgr=AppWidgetManager.getInstance(this);mgr.getAppWidgetIds(ComponentName(this,CalcWidget::class.java)).forEach{CalcWidget.update(this,mgr,it)};result.success(true)}
+                "pinPhoto"->{pin(PhotoWidget::class.java);result.success(true)}
+                "pinFolder"->{pin(FolderWidget::class.java);result.success(true)}
+                "pinCalc"->{pin(CalcWidget::class.java);result.success(true)}
+                "pinNotif"->{pin(NotifWidget::class.java);result.success(true)}
+                "testPopup"->{OverlayService.show(this,"Super Widget","Test","Popup for 5 seconds!",packageName);result.success(true)}
+                "requestOverlay"->{startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,Uri.parse("package:$packageName")));result.success(true)}
+                "requestNL"->{startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));result.success(true)}
+                else->result.notImplemented()
             }
         }
     }
 
-    private fun <T> pin(cls: Class<T>) { val mgr=AppWidgetManager.getInstance(this); if(mgr.isRequestPinAppWidgetSupported)mgr.requestPinAppWidget(ComponentName(this,cls),null,null) }
+    private fun <T>pin(cls:Class<T>){val mgr=AppWidgetManager.getInstance(this);if(mgr.isRequestPinAppWidgetSupported)mgr.requestPinAppWidget(ComponentName(this,cls),null,null)}
     private fun isNLEnabled()=Settings.Secure.getString(contentResolver,"enabled_notification_listeners")?.contains(packageName)==true
 
-    override fun onActivityResult(req:Int,res:Int,data:Intent?) {
+    override fun onActivityResult(req:Int,res:Int,data:Intent?){
         super.onActivityResult(req,res,data)
-        if(req==PICK&&res==RESULT_OK&&data!=null){
-            val pp=getSharedPreferences(PhotoWidget.PREFS,Context.MODE_PRIVATE)
-            val uris=JSONArray()
-            data.clipData?.let{cd->for(i in 0 until cd.itemCount){val u=cd.getItemAt(i).uri;try{contentResolver.takePersistableUriPermission(u,Intent.FLAG_GRANT_READ_URI_PERMISSION)}catch(e:Exception){};uris.put(u.toString())}}?:data.data?.let{u->try{contentResolver.takePersistableUriPermission(u,Intent.FLAG_GRANT_READ_URI_PERMISSION)}catch(e:Exception){};uris.put(u.toString())}
-            val existing=try{JSONArray(pp.getString("photos","[]"))}catch(e:Exception){JSONArray()}
-            for(i in 0 until existing.length())uris.put(existing.getString(i))
-            pp.edit().putString("photos",uris.toString()).putInt("idx",0).apply()
-            val mgr=AppWidgetManager.getInstance(this)
-            mgr.getAppWidgetIds(ComponentName(this,PhotoWidget::class.java)).forEach{PhotoWidget.update(this,mgr,it)}
-            PhotoWidget.schedule(this)
-        }
+        if(req==PICK&&res==RESULT_OK&&data!=null){val pp=getSharedPreferences(PhotoWidget.PREFS,Context.MODE_PRIVATE);val uris=JSONArray();data.clipData?.let{cd->for(i in 0 until cd.itemCount){val u=cd.getItemAt(i).uri;try{contentResolver.takePersistableUriPermission(u,Intent.FLAG_GRANT_READ_URI_PERMISSION)}catch(e:Exception){};uris.put(u.toString())}}?:data.data?.let{u->try{contentResolver.takePersistableUriPermission(u,Intent.FLAG_GRANT_READ_URI_PERMISSION)}catch(e:Exception){};uris.put(u.toString())};val existing=try{JSONArray(pp.getString("photos","[]"))}catch(e:Exception){JSONArray()};for(i in 0 until existing.length())uris.put(existing.getString(i));pp.edit().putString("photos",uris.toString()).putInt("idx",0).apply();val mgr=AppWidgetManager.getInstance(this);mgr.getAppWidgetIds(ComponentName(this,PhotoWidget::class.java)).forEach{PhotoWidget.update(this,mgr,it)};PhotoWidget.schedule(this)}
     }
 }

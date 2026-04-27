@@ -5,7 +5,7 @@
     android:background="#FF000000">
     <ImageView android:id="@+id/photo_img"
         android:layout_width="match_parent" android:layout_height="match_parent"
-        android:scaleType="fitCenter" android:visibility="gone"/>
+        android:scaleType="centerCrop" android:visibility="gone"/>
     <TextView android:id="@+id/photo_hint"
         android:layout_width="match_parent" android:layout_height="match_parent"
         android:gravity="center" android:text="Open app to select photos"

@@ -1,9 +1,13 @@
 package com.mydev.superwidget
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import org.json.JSONArray
+import org.json.JSONObject
 
 class NotifService : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification) {
@@ -15,8 +19,15 @@ class NotifService : NotificationListenerService() {
         val p=getSharedPreferences("sw_notif",Context.MODE_PRIVATE)
         val allowed=p.getStringSet("allowed",emptySet())?:emptySet()
         if(allowed.isNotEmpty()&&!allowed.contains(sbn.packageName)) return
-        if(!Settings.canDrawOverlays(this)) return
+        val arr=try{JSONArray(p.getString("list","[]"))}catch(e:Exception){JSONArray()}
+        if(arr.length()>0){val last=arr.getJSONObject(0);if(last.optString("t")==title&&last.optString("x")==text&&last.optString("p")==sbn.packageName)return}
         val appName=try{packageManager.getApplicationLabel(packageManager.getApplicationInfo(sbn.packageName,0)).toString()}catch(e:Exception){sbn.packageName}
-        OverlayService.show(this,appName,title,text,sbn.packageName)
+        val item=JSONObject().apply{put("a",appName);put("p",sbn.packageName);put("t",title);put("x",text);put("ts",System.currentTimeMillis())}
+        val newArr=JSONArray(); newArr.put(item)
+        for(i in 0 until minOf(arr.length(),19)) newArr.put(arr.get(i))
+        p.edit().putString("list",newArr.toString()).apply()
+        if(Settings.canDrawOverlays(this)) OverlayService.show(this,appName,title,text,sbn.packageName)
+        val mgr=AppWidgetManager.getInstance(this)
+        mgr.getAppWidgetIds(ComponentName(this,NotifWidget::class.java)).forEach{NotifWidget.update(this,mgr,it)}
     }
 }

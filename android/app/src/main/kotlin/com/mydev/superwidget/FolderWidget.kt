@@ -14,17 +14,19 @@ class FolderWidget : AppWidgetProvider() {
         fun update(ctx: Context, mgr: AppWidgetManager, id: Int) {
             val p = ctx.applicationContext.getSharedPreferences("sw_folder", Context.MODE_PRIVATE)
             val alpha=p.getInt("alpha",200); val r=p.getInt("r",26); val g=p.getInt("g",26); val b=p.getInt("b",46)
+            val cols=p.getInt("cols",4)
             val v = RemoteViews(ctx.packageName, R.layout.folder_widget)
             v.setInt(R.id.folder_root,"setBackgroundColor",(alpha shl 24)or(r shl 16)or(g shl 8)or b)
+            v.setInt(R.id.folder_grid,"setNumColumns",cols)
             try {
                 val folders = JSONArray(p.getString("folders","[]") ?: "[]")
                 val fidx = p.getInt("wid_$id",0)
                 if (folders.length()>0) v.setTextViewText(R.id.folder_name, folders.getJSONObject(if(fidx<folders.length())fidx else 0).optString("name","Folder"))
             } catch(e:Exception){}
-            v.setRemoteAdapter(R.id.folder_list, Intent(ctx, FolderRemoteService::class.java).putExtra("wid",id))
+            v.setRemoteAdapter(R.id.folder_grid, Intent(ctx, FolderRemoteService::class.java).putExtra("wid",id))
             val pi = PendingIntent.getBroadcast(ctx,id,Intent(ctx,FolderWidget::class.java).setAction("com.mydev.superwidget.APP_LAUNCH"),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
-            v.setPendingIntentTemplate(R.id.folder_list,pi)
-            mgr.updateAppWidget(id,v); mgr.notifyAppWidgetViewDataChanged(id,R.id.folder_list)
+            v.setPendingIntentTemplate(R.id.folder_grid,pi)
+            mgr.updateAppWidget(id,v); mgr.notifyAppWidgetViewDataChanged(id,R.id.folder_grid)
         }
     }
     override fun onUpdate(ctx: Context, mgr: AppWidgetManager, ids: IntArray) { ids.forEach { update(ctx,mgr,it) } }
