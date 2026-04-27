@@ -5,9 +5,7 @@
     android:background="#000000">
     <ImageView android:id="@+id/photo_img"
         android:layout_width="match_parent" android:layout_height="match_parent"
-        android:scaleType="centerCrop" android:visibility="gone"/>
-    <TextView android:id="@+id/photo_hint"
-        android:layout_width="match_parent" android:layout_height="match_parent"
-        android:gravity="center" android:text="Empty"
-        android:textColor="#44FFFFFF" android:textSize="10sp"/>
+        android:scaleType="centerCrop"/>
+    <View android:layout_width="match_parent" android:layout_height="match_parent"
+        android:background="#1A000000"/>
 </FrameLayout>
